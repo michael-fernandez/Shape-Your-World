@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
@@ -15,6 +16,8 @@ import readimg.IMGData;
 public class Main extends SimpleApplication{
 
     IMGData imgData;
+    BulletAppState bulletAppState;
+    
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -23,6 +26,13 @@ public class Main extends SimpleApplication{
 
     @Override
     public void simpleInitApp() {
+        
+        //set up the physics
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
+        
+        
+        
         try {
             //get image data
             imgData = new IMGData(); //Koala image is 1024 x 768
