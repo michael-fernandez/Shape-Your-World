@@ -16,13 +16,14 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.scene.control.Control;
 
 /**
  *
  * @author Owner
  */
 public class Ball {
-
+    private Main main;
     private Sphere sphere;
     private Geometry ball_geo;
     private Material ball_mat;
@@ -32,7 +33,12 @@ public class Ball {
     private RigidBodyControl rigidBody;
     private GhostControl ghost;
     
-    public Ball(Main main, Vector3f position) {
+    public long timestamp;
+    
+    
+    public Ball(Main main, Vector3f position, long timestamp) {
+        this.main = main;
+        this.timestamp = timestamp;
         sphere = new Sphere(10, 10, 0.1f);
         ball_geo = new Geometry("hail precursor", sphere);
         ball_mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
@@ -49,10 +55,19 @@ public class Ball {
         ball_geo.addControl(rigidBody);
         ball_geo.addControl(ghost);
         
-        main.getRootNode().attachChild(ball_geo);
+        rigidBody.setKinematic(true);//moves the ball into position
+        ball_node.move(position);
+        rigidBody.setKinematic(false);
+        
+        main.getRootNode().attachChild(ball_node);
         main.bulletAppState.getPhysicsSpace().add(rigidBody);
         main.bulletAppState.getPhysicsSpace().add(ghost);
     }
     
+    public void remove(){
+        main.bulletAppState.getPhysicsSpace().remove(rigidBody);
+        main.bulletAppState.getPhysicsSpace().remove(ghost);
+        main.getRootNode().removeFromParent();
+    }
 }
 

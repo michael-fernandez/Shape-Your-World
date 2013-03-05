@@ -3,6 +3,7 @@ package mygame;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.material.Material;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
@@ -17,7 +18,7 @@ public class Main extends SimpleApplication{
 
     IMGData imgData;
     BulletAppState bulletAppState;
-    
+    HailGenerator hailGenerator;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -31,7 +32,7 @@ public class Main extends SimpleApplication{
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         
-        
+        hailGenerator = new HailGenerator(this, new Vector2f(40, 40), new Vector3f(0,0,0) );
         
         try {
             //get image data
