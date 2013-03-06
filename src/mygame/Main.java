@@ -16,7 +16,6 @@ import com.jme3.texture.Texture;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import readimg.IMGData;
 
 public class Main extends SimpleApplication{
 
