@@ -2,6 +2,10 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -19,6 +23,17 @@ public class Main extends SimpleApplication{
     IMGData imgData;
     BulletAppState bulletAppState;
     HailGenerator hailGenerator;
+    
+    /*
+     * Things to do:
+     * Move terrain generation to another class find.
+     * Move terrain physics as well
+     */
+    
+    /*Terrain physics*/
+    CollisionShape terrainCollisionShape;
+    RigidBodyControl terrainRigidBody;
+    /*                                  */
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -86,9 +101,15 @@ public class Main extends SimpleApplication{
             terrain.setMaterial(mat);
             terrain.setLocalTranslation(0, -normalizer, 0);
             terrain.setLocalScale(2f, 1f, 2f);
-
+            
+            terrainCollisionShape = CollisionShapeFactory.createMeshShape(terrain);
+            terrainRigidBody = new RigidBodyControl(terrainCollisionShape, 0f);
+            
             rootNode.attachChild(terrain);
+            bulletAppState.getPhysicsSpace().add(terrain);//register terrain to physics space
+            
             flyCam.setMoveSpeed(100);
+            
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
