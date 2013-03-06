@@ -119,10 +119,10 @@ public class Main extends SimpleApplication{
         //TODO: add update code
     }
 
-    public AbstractHeightMap initFractalHeightMap(int size, float range, float roughness, float normalizer, float waterLevel, int[][] heightValues) {
+    public AbstractHeightMap initFractalHeightMap(int size, float range, float roughness, float normalizer, float waterLevel, float[][] heightValues) {
         AbstractHeightMap heightmap = null;
         try {
-            heightmap = new ModifiedMidpointDisplacementHeightMap(size, range, roughness, heightValues);
+            heightmap = new ModifiedMidpointDisplacementHeightMap(size, range, roughness, 0,  heightValues);
         } catch (Exception ex) {
         }
         // normalize
