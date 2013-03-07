@@ -3,12 +3,15 @@ package mygame;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
@@ -32,6 +35,7 @@ public class Main extends SimpleApplication{
     /*Terrain physics*/
     CollisionShape terrainCollisionShape;
     RigidBodyControl terrainRigidBody;
+    GhostControl ghost;
     /*                                  */
     
     public static void main(String[] args) {
@@ -45,8 +49,9 @@ public class Main extends SimpleApplication{
         //set up the physics
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
+
         
-        hailGenerator = new HailGenerator(this, new Vector2f(40, 40), new Vector3f(0,0,0) );
+        hailGenerator = new HailGenerator(this, new Vector2f(100f, 100f), new Vector3f(0,5f,0) );
         
         try {
             //get image data
@@ -80,7 +85,7 @@ public class Main extends SimpleApplication{
             int [][] heightValues = new int[HeightMatrixSize][HeightMatrixSize]; //first set of height values for fractle
             */
             //test: WORKS :D
-            int[][] heightValues = new int[17][17];
+            float[][] heightValues = new float[17][17];
             heightValues[8][8] = 200;
             //create fractal height field
             int size = imgData.gv.length+1;
@@ -101,14 +106,29 @@ public class Main extends SimpleApplication{
             terrain.setLocalTranslation(0, -normalizer, 0);
             terrain.setLocalScale(2f, 1f, 2f);
             
+            
+            
             terrainCollisionShape = CollisionShapeFactory.createMeshShape(terrain);
-            terrainRigidBody = new RigidBodyControl(terrainCollisionShape, 0f);
+            RigidBodyControl body = new RigidBodyControl(new HeightfieldCollisionShape(terrain.getHeightMap(), terrain.getLocalScale()), 0);
+            terrain.addControl(body);
             
+            terrainRigidBody = new RigidBodyControl(terrainCollisionShape);
+            terrainRigidBody.setKinematic(true);
+            
+            terrain.addControl(terrainRigidBody);           
+
+ 
+           
+            rootNode.addControl(terrainRigidBody);
+
             rootNode.attachChild(terrain);
+            
+            
             bulletAppState.getPhysicsSpace().add(terrain);//register terrain to physics space
-            
+
+            bulletAppState.getPhysicsSpace().enableDebug(assetManager);
             flyCam.setMoveSpeed(100);
-            
+
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -116,7 +136,7 @@ public class Main extends SimpleApplication{
 
     @Override
     public void simpleUpdate(float tpf) {
-        //TODO: add update code
+        hailGenerator.update();
     }
 
     public AbstractHeightMap initFractalHeightMap(int size, float range, float roughness, float normalizer, float waterLevel, float[][] heightValues) {
@@ -150,9 +170,9 @@ public class Main extends SimpleApplication{
         grass.setWrap(Texture.WrapMode.Repeat);
         Texture dirt = assetManager.loadTexture("Textures/Terrain/splat/dirt.jpg");
         dirt.setWrap(Texture.WrapMode.Repeat);
-        Texture rock = assetManager.loadTexture("Textures/DirtWater.jpg");
+        Texture rock = assetManager.loadTexture("Textures/Terrain/Rocky/RockyTexture.jpg");
         rock.setWrap(Texture.WrapMode.Repeat);
-        Texture dirtWater = assetManager.loadTexture("Textures/Test.jpg");
+        Texture dirtWater = assetManager.loadTexture("Textures/Terrain/Pond/Pond.jpg");
         dirtWater.setWrap(Texture.WrapMode.Repeat);
         mat.setTexture("region1ColorMap", dirtWater);
         mat.setTexture("region2ColorMap", grass);

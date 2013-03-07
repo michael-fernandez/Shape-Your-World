@@ -16,7 +16,7 @@ import java.util.LinkedList;
 public class HailGenerator {
 
     private static final int HAIL_MAX = 1000;
-    public static final int TIME_TO_LIVE = 5000;//milliseconds
+    public static final int TIME_TO_LIVE = 10000;//milliseconds
     public static int numOfHail = 0;
     private Main main;
     private Vector2f area;//area in which the hail will fall in
@@ -45,25 +45,26 @@ public class HailGenerator {
     }
 
     public void update() {
-        //remove hail
-        long time = System.currentTimeMillis();
-        boolean flag = true;
-        while (flag) {
-            if (time - hailList.getFirst().timestamp > TIME_TO_LIVE) {
-                hailList.getFirst().remove();
-                hailList.removeFirst();
-                numOfHail--;
-            }else{
-                flag=false;
-            }
-        }
         
-
-        int limit = 100;
+        int limit = (int)(Math.random()*100+1);
         
         for(int i=0; i<limit && numOfHail<HAIL_MAX; i++){
             generateHail();
         }
         
+        //remove hail
+        long time = System.currentTimeMillis();
+        boolean flag = true;
+        while (flag) {
+            if ( (time - hailList.getFirst().timestamp) > TIME_TO_LIVE) {
+                Ball b = hailList.getFirst();
+                b.remove();
+                hailList.removeFirst();
+                b = null;
+                numOfHail--;
+            }else{
+                flag=false;
+            }
+        }
     }
 }

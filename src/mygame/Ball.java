@@ -39,13 +39,14 @@ public class Ball {
     public Ball(Main main, Vector3f position, long timestamp) {
         this.main = main;
         this.timestamp = timestamp;
-        sphere = new Sphere(10, 10, 0.1f);
+        sphere = new Sphere(10, 10, 1f);
         ball_geo = new Geometry("hail precursor", sphere);
         ball_mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         ball_mat.setColor("Color", ColorRGBA.White);
         ball_geo.setMaterial(ball_mat);
         
         ball_node = new Node();
+        //ball_node.move(position);
         ball_node.attachChild(ball_geo);
         
         shape = new SphereCollisionShape(sphere.radius);
@@ -54,20 +55,23 @@ public class Ball {
         
         ball_geo.addControl(rigidBody);
         ball_geo.addControl(ghost);
+        ball_node.addControl(ghost);
+        ball_node.addControl(rigidBody);
         
-        rigidBody.setKinematic(true);//moves the ball into position
-        ball_node.move(position);
-        rigidBody.setKinematic(false);
+        rigidBody.setPhysicsLocation(position);
+        
+        
         
         main.getRootNode().attachChild(ball_node);
         main.bulletAppState.getPhysicsSpace().add(rigidBody);
         main.bulletAppState.getPhysicsSpace().add(ghost);
+        main.bulletAppState.getPhysicsSpace().add(ball_node);
     }
     
     public void remove(){
         main.bulletAppState.getPhysicsSpace().remove(rigidBody);
         main.bulletAppState.getPhysicsSpace().remove(ghost);
-        main.getRootNode().removeFromParent();
+        main.getRootNode().detachChild(ball_node);
     }
 }
 
