@@ -116,9 +116,6 @@ public class Main extends SimpleApplication{
             terrainRigidBody.setKinematic(true);
             
             terrain.addControl(terrainRigidBody);           
-
- 
-           
             rootNode.addControl(terrainRigidBody);
 
             rootNode.attachChild(terrain);
@@ -142,7 +139,7 @@ public class Main extends SimpleApplication{
     public AbstractHeightMap initFractalHeightMap(int size, float range, float roughness, float normalizer, float waterLevel, float[][] heightValues) {
         AbstractHeightMap heightmap = null;
         try {
-            heightmap = new ModifiedMidpointDisplacementHeightMap(size, range, roughness, 0,  heightValues);
+            heightmap = new ModifiedMidpointDisplacementHeightMap(size, range, roughness, System.currentTimeMillis(),  heightValues);
         } catch (Exception ex) {
         }
         // normalize
